@@ -106,7 +106,7 @@ namespace FANN {
         */
         bool read_train_from_file(const std::string &filename) {
             destroy_train();
-            train_data = fann_read_train_from_file(filename.c_str());
+            train_data = fann_read_train_from_file(NULL, filename.c_str());
             return (train_data != NULL);
         }
 
@@ -333,7 +333,7 @@ namespace FANN {
         void set_train_data(unsigned int num_data,
                             unsigned int num_input, fann_type **input,
                             unsigned int num_output, fann_type **output) {
-            set_train_data(fann_create_train_pointer_array(num_data, num_input, input, num_output, output));
+            set_train_data(fann_create_train_pointer_array(NULL, num_data, num_input, input, num_output, output));
         }
 
         /* Method: set_train_data
@@ -357,7 +357,7 @@ namespace FANN {
         void set_train_data(unsigned int num_data,
                             unsigned int num_input, fann_type *input,
                             unsigned int num_output, fann_type *output) {
-            set_train_data(fann_create_train_array(num_data, num_input, input, num_output, output));
+            set_train_data(fann_create_train_array(NULL, num_data, num_input, input, num_output, output));
         }
 
     private:
@@ -406,7 +406,7 @@ namespace FANN {
                                                                        fann_type *,
                                                                        fann_type *)) {
             destroy_train();
-            train_data = fann_create_train_from_callback(num_data, num_input, num_output, user_function);
+            train_data = fann_create_train_from_callback(NULL, num_data, num_input, num_output, user_function);
         }
 
 #ifndef FIXEDFANN

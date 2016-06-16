@@ -249,7 +249,7 @@ FANN_EXTERNAL float FANN_API fann_test_data(struct fann *ann, struct fann_train_
 
     This function appears in FANN >= 1.0.0
 */ 
-FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const char *filename);
+FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(struct fann_error * err, const char *filename);
 
 
 /* Function: fann_create_train
@@ -261,7 +261,7 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const c
 
     This function appears in FANN >= 2.2.0
 */ 
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int num_data, unsigned int num_input, unsigned int num_output);
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(struct fann_error *err, unsigned int num_data, unsigned int num_input, unsigned int num_output);
 
 /* Function: fann_create_train_pointer_array
    Creates an training data struct and fills it with data from provided arrays of pointer.
@@ -276,7 +276,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 
     This function appears in FANN >= 2.3.0
 */ 
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_pointer_array(unsigned int num_data, unsigned int num_input, fann_type **input, unsigned int num_output, fann_type **output);
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_pointer_array(struct fann_error *err, unsigned int num_data, unsigned int num_input, fann_type **input, unsigned int num_output, fann_type **output);
 
 /* Function: fann_create_train_array
    Creates an training data struct and fills it with data from provided arrays, where the arrays must have the dimensions:
@@ -293,7 +293,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_pointer_array(
 
     This function appears in FANN >= 2.3.0
 */ 
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_array(unsigned int num_data, unsigned int num_input, fann_type *input, unsigned int num_output, fann_type *output);
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_array(struct fann_error *err, unsigned int num_data, unsigned int num_input, fann_type *input, unsigned int num_output, fann_type *output);
 
 /* Function: fann_create_train_from_callback
    Creates the training data struct from a user supplied function.
@@ -325,7 +325,8 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_array(unsigned
 
     This function appears in FANN >= 2.1.0
 */ 
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(unsigned int num_data,
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(struct fann_error *err,
+                                          unsigned int num_data,
                                           unsigned int num_input,
                                           unsigned int num_output,
                                           void (FANN_API *user_function)( unsigned int,

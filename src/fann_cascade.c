@@ -130,7 +130,7 @@ FANN_EXTERNAL void FANN_API fann_cascadetrain_on_file(struct fann *ann, const ch
 													  unsigned int neurons_between_reports,
 													  float desired_error)
 {
-	struct fann_train_data *data = fann_read_train_from_file(filename);
+	struct fann_train_data *data = fann_read_train_from_file((struct fann_error *) ann, filename);
 
 	if(data == NULL)
 	{

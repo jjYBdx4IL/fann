@@ -28,18 +28,18 @@
 /*
  * Reads training data from a file. 
  */
-FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(const char *configuration_file)
+FANN_EXTERNAL struct fann_train_data *FANN_API fann_read_train_from_file(struct fann_error *err, const char *configuration_file)
 {
 	struct fann_train_data *data;
 	FILE *file = fopen(configuration_file, "r");
 
 	if(!file)
 	{
-		fann_error(NULL, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
+		fann_error(err, FANN_E_CANT_OPEN_CONFIG_R, configuration_file);
 		return NULL;
 	}
 
-	data = fann_read_train_from_fd(file, configuration_file);
+	data = fann_read_train_from_fd(err, file, configuration_file);
 	fclose(file);
 	return data;
 }
@@ -302,7 +302,7 @@ FANN_EXTERNAL void FANN_API fann_train_on_file(struct fann *ann, const char *fil
 											   unsigned int epochs_between_reports,
 											   float desired_error)
 {
-	struct fann_train_data *data = fann_read_train_from_file(filename);
+	struct fann_train_data *data = fann_read_train_from_file((struct fann_error *)ann, filename);
 
 	if(data == NULL)
 	{
@@ -806,7 +806,7 @@ int fann_save_train_internal_fd(struct fann_train_data *data, FILE * file, const
 /*
  * Creates an empty set of training data
  */
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int num_data, unsigned int num_input, unsigned int num_output)
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(struct fann_error *err, unsigned int num_data, unsigned int num_input, unsigned int num_output)
 {
 	fann_type *data_input, *data_output;
 	unsigned int i;
@@ -815,7 +815,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 
 	if(data == NULL)
 	{
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_error(err, FANN_E_CANT_ALLOCATE_MEM);
 		return NULL;
 	}
 	
@@ -827,7 +827,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 	data->input = (fann_type **) calloc(num_data, sizeof(fann_type *));
 	if(data->input == NULL)
 	{
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_error(err, FANN_E_CANT_ALLOCATE_MEM);
 		fann_destroy_train(data);
 		return NULL;
 	}
@@ -835,7 +835,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 	data->output = (fann_type **) calloc(num_data, sizeof(fann_type *));
 	if(data->output == NULL)
 	{
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_error(err, FANN_E_CANT_ALLOCATE_MEM);
 		fann_destroy_train(data);
 		return NULL;
 	}
@@ -843,7 +843,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 	data_input = (fann_type *) calloc(num_input * num_data, sizeof(fann_type));
 	if(data_input == NULL)
 	{
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_error(err, FANN_E_CANT_ALLOCATE_MEM);
 		fann_destroy_train(data);
 		return NULL;
 	}
@@ -851,7 +851,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 	data_output = (fann_type *) calloc(num_output * num_data, sizeof(fann_type));
 	if(data_output == NULL)
 	{
-		fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
+		fann_error(err, FANN_E_CANT_ALLOCATE_MEM);
 		fann_destroy_train(data);
 		return NULL;
 	}
@@ -866,11 +866,11 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train(unsigned int n
 	return data;
 }
 
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_pointer_array(unsigned int num_data, unsigned int num_input, fann_type **input, unsigned int num_output, fann_type **output)
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_pointer_array(struct fann_error *err, unsigned int num_data, unsigned int num_input, fann_type **input, unsigned int num_output, fann_type **output)
 {
 	unsigned int i;
     struct fann_train_data *data;
-	data = fann_create_train(num_data, num_input, num_output);
+	data = fann_create_train(err, num_data, num_input, num_output);
 
 	if(data == NULL)
 		return NULL;
@@ -884,11 +884,11 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_pointer_array(
 	return data;
 }
 
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_array(unsigned int num_data, unsigned int num_input, fann_type *input, unsigned int num_output, fann_type *output)
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_array(struct fann_error *err, unsigned int num_data, unsigned int num_input, fann_type *input, unsigned int num_output, fann_type *output)
 {
 	unsigned int i;
     struct fann_train_data *data;
-	data = fann_create_train(num_data, num_input, num_output);
+	data = fann_create_train(err, num_data, num_input, num_output);
 
 	if(data == NULL)
 		return NULL;
@@ -906,7 +906,8 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_array(unsigned
 /*
  * Creates training data from a callback function.
  */
-FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(unsigned int num_data,
+FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(struct fann_error *err,
+                                          unsigned int num_data,
                                           unsigned int num_input,
                                           unsigned int num_output,
                                           void (FANN_API *user_function)( unsigned int,
@@ -916,7 +917,7 @@ FANN_EXTERNAL struct fann_train_data * FANN_API fann_create_train_from_callback(
                                                                  fann_type * ))
 {
     unsigned int i;
-	struct fann_train_data *data = fann_create_train(num_data, num_input, num_output);
+	struct fann_train_data *data = fann_create_train(err, num_data, num_input, num_output);
 	if(data == NULL)
 	{
 		return NULL;
@@ -948,7 +949,7 @@ FANN_EXTERNAL fann_type * FANN_API fann_get_train_output(struct fann_train_data 
 /*
  * INTERNAL FUNCTION Reads training data from a file descriptor. 
  */
-struct fann_train_data *fann_read_train_from_fd(FILE * file, const char *filename)
+struct fann_train_data *fann_read_train_from_fd(struct fann_error *err, FILE * file, const char *filename)
 {
 	unsigned int num_input, num_output, num_data, i, j;
 	unsigned int line = 1;
@@ -956,12 +957,12 @@ struct fann_train_data *fann_read_train_from_fd(FILE * file, const char *filenam
 
 	if(fscanf(file, "%u %u %u\n", &num_data, &num_input, &num_output) != 3)
 	{
-		fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
+		fann_error(err, FANN_E_CANT_READ_TD, filename, line);
 		return NULL;
 	}
 	line++;
 
-	data = fann_create_train(num_data, num_input, num_output);
+	data = fann_create_train(err, num_data, num_input, num_output);
 	if(data == NULL)
 	{
 		return NULL;
@@ -973,7 +974,7 @@ struct fann_train_data *fann_read_train_from_fd(FILE * file, const char *filenam
 		{
 			if(fscanf(file, FANNSCANF " ", &data->input[i][j]) != 1)
 			{
-				fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
+				fann_error(err, FANN_E_CANT_READ_TD, filename, line);
 				fann_destroy_train(data);
 				return NULL;
 			}
@@ -984,7 +985,7 @@ struct fann_train_data *fann_read_train_from_fd(FILE * file, const char *filenam
 		{
 			if(fscanf(file, FANNSCANF " ", &data->output[i][j]) != 1)
 			{
-				fann_error(NULL, FANN_E_CANT_READ_TD, filename, line);
+				fann_error(err, FANN_E_CANT_READ_TD, filename, line);
 				fann_destroy_train(data);
 				return NULL;
 			}
